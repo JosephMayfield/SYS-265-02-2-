@@ -1,0 +1,62 @@
+---
+- name: SysAdmin + Hardening on Ansible01
+  hosts: ansible01-joseph
+  become: yes
+
+  tasks:
+
+  - name: Install nginx
+    yum:
+      name: nginx
+      state: present
+
+  - name: Disable root SSH login
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: "^PermitRootLogin"
+      line: "PermitRootLogin no"
+
+
+- name: SysAdmin on Ansible02
+  hosts: ansible02-joseph
+  become: yes
+
+  tasks:
+
+  - name: Install vim
+    yum:
+      name: vim
+      state: present
+
+
+- name: SysAdmin + GPO on MGMT01
+  hosts: mgmt01-joseph
+
+  tasks:
+
+  - name: Create Scripts folder
+    win_file:
+      path: C:\Scripts
+      state: directory
+
+  - name: Set password length
+    win_security_policy:
+      section: System Access
+      key: MinimumPasswordLength
+      value: 12
+
+  - name: Disable Guest account
+    win_user:
+      name: Guest
+      account_disabled: yes
+
+
+- name: Hardening on WKS01
+  hosts: wks01-joseph
+
+  tasks:
+
+  - name: Enable Windows Firewall
+    win_firewall:
+      state: enabled
+
